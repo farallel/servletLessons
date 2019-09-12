@@ -69,11 +69,9 @@ public class UserDAO implements DAO<User> {
 
     public boolean isUserExistByUsernameAndPassword(String username,
                                                     String password) {
-        System.out.println(username);
-        System.out.println(password);
         boolean result = false;
-        Connection connection = Connector.createConnection();
         try {
+            connection = Connector.createConnection();
             preparedStatement = connection.prepareStatement(UserQueries.SELECT_BY_USERNAME_AND_PASSWORD.getQuery());
 
             preparedStatement.setString(1, username);
@@ -87,8 +85,7 @@ public class UserDAO implements DAO<User> {
             try {
                 resultSet.close();
                 preparedStatement.close();
-//                connection.close();
-                Connector.closeConnection();
+                connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -100,8 +97,7 @@ public class UserDAO implements DAO<User> {
                                              String password) {
         Role role = Role.UNKNOWN;
         try {
-//            connection = DriverManager.getConnection(Constants.DATABASE_URL, Constants.DATABASE_USERNAME, Constants.DATABASE_PASSWORD);
-            Connection connection = Connector.createConnection();
+            connection = Connector.createConnection();
             preparedStatement = connection.prepareStatement(UserQueries.SELECT_BY_USERNAME_AND_PASSWORD.getQuery());
 
             preparedStatement.setString(1, username);
@@ -121,8 +117,7 @@ public class UserDAO implements DAO<User> {
             try {
                 resultSet.close();
                 preparedStatement.close();
-//                connection.close();
-                Connector.closeConnection();
+                connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

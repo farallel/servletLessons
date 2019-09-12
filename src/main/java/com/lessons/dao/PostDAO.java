@@ -14,7 +14,7 @@ public class PostDAO implements DAO<Post> {
     @Override
     public void create(Post entity) {
         try {
-            connection = DriverManager.getConnection(Constants.DATABASE_URL, Constants.DATABASE_USERNAME, Constants.DATABASE_PASSWORD);
+            connection = Connector.createConnection();
             preparedStatement = connection.prepareStatement(PostQueries.INSERT.getQuery());
 
             preparedStatement.setString(1, entity.getText());
@@ -37,7 +37,7 @@ public class PostDAO implements DAO<Post> {
     public Post read(Integer id) {
         Post post = null;
         try {
-            connection = DriverManager.getConnection(Constants.DATABASE_URL, Constants.DATABASE_USERNAME, Constants.DATABASE_PASSWORD);
+            connection = Connector.createConnection();
             preparedStatement = connection.prepareStatement(PostQueries.SELECT.getQuery());
 
             preparedStatement.setInt(1, id);
@@ -63,21 +63,25 @@ public class PostDAO implements DAO<Post> {
     public ArrayList<Post> readAll() {
         ArrayList<Post> posts = new ArrayList<>();
         try {
-            Connection connection = Connector.createConnection();
-//            connection = DriverManager.getConnection(Constants.DATABASE_URL, Constants.DATABASE_USERNAME, Constants.DATABASE_PASSWORD);
+            connection = Connector.createConnection();
             preparedStatement = connection.prepareStatement(PostQueries.SELECT_ALL.getQuery());
 
             resultSet = preparedStatement.executeQuery();
 
-            while (resultSet.next())
-                posts.add(new Post(resultSet.getInt("id"), resultSet.getString("text"), resultSet.getInt("user_id")));
+            while (resultSet.next()) {
+                posts.add(new Post(
+                        resultSet.getInt("id"),
+                        resultSet.getString("text"),
+                        resultSet.getInt("user_id")
+                ));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
                 resultSet.close();
                 preparedStatement.close();
-                Connector.closeConnection();
+                connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
