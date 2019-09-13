@@ -18,13 +18,17 @@
             </form>
             <form method="post" action="<c:url value='/delete'/>">
                 <input type="number" hidden name="id" value="${post.id}" />
-                <input type="submit" name="delete" value="Delete"/>
+                <input type="submit" value="Delete"/>
             </form>
         </ul>
         <hr/>
     </c:forEach>
-    </br>
-    </br>
+    <br><br>
+    <form method="post" action="<c:url value='/home'/>">
+        <label>Text: <input type="text" name="text"></label><br>
+        <input type="submit" value="Post" name="Post"><br>
+    </form>
+    <br><br>
     <a href="<c:url value='/logout'/>">Logout</a>
 </body>
 </html>

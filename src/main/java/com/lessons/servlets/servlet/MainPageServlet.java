@@ -1,7 +1,6 @@
 package com.lessons.servlets.servlet;
 
 import com.lessons.dao.PostDAO;
-import com.lessons.dao.UserDAO;
 import com.lessons.model.Post;
 import com.lessons.model.Role;
 
@@ -15,11 +14,11 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MainPageServlet extends HttpServlet {
+    private final AtomicReference<PostDAO> postDAO = new AtomicReference<>(new PostDAO());
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final HttpSession session = req.getSession();
-//        final AtomicReference<PostDAO> postDAO = (AtomicReference<PostDAO>) req.getServletContext().getAttribute("post_dao");
-        final AtomicReference<PostDAO> postDAO = new AtomicReference<>(new PostDAO());
         ArrayList<Post> posts = postDAO.get().readAll();
         req.setAttribute("posts", posts);
 
@@ -34,7 +33,9 @@ public class MainPageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //TODO Add adding functionality.
+        String text = req.getParameter("text");
+        Integer userId = (Integer) req.getSession().getAttribute("id");
+        postDAO.get().create(new Post(text, userId));
         doGet(req, resp);
     }
 }

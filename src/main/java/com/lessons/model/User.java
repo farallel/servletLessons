@@ -7,6 +7,7 @@ public class User {
     private String username;
     private String password;
     private Integer roleId;
+    private Role role;
 
     public User() {
     }
@@ -50,6 +51,14 @@ public class User {
         this.roleId = roleId;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,12 +67,13 @@ public class User {
         return Objects.equals(id, user.id) &&
                 Objects.equals(username, user.username) &&
                 Objects.equals(password, user.password) &&
-                Objects.equals(roleId, user.roleId);
+                Objects.equals(roleId, user.roleId) &&
+                role == user.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, roleId);
+        return Objects.hash(id, username, password, roleId, role);
     }
 
     @Override
@@ -73,6 +83,7 @@ public class User {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", roleId=" + roleId +
+                ", role=" + role +
                 '}';
     }
 }

@@ -12,19 +12,18 @@ public class PostDAO implements DAO<Post> {
     private ResultSet resultSet;
 
     @Override
-    public void create(Post entity) {
+    public void create(Post post) {
         try {
             connection = Connector.createConnection();
             preparedStatement = connection.prepareStatement(PostQueries.INSERT.getQuery());
 
-            preparedStatement.setString(1, entity.getText());
-            preparedStatement.setInt(2, entity.getUserId());
-            resultSet = preparedStatement.executeQuery();
+            preparedStatement.setString(1, post.getText());
+            preparedStatement.setInt(2, post.getUserId());
+            preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
-                resultSet.close();
                 preparedStatement.close();
                 connection.close();
             } catch (SQLException e) {
@@ -90,12 +89,27 @@ public class PostDAO implements DAO<Post> {
     }
 
     @Override
-    public void update(Post entity) {
+    public void update(Post post) {
 
     }
 
     @Override
     public void delete(Integer id) {
+        try {
+            connection = Connector.createConnection();
+            preparedStatement = connection.prepareStatement(PostQueries.DELETE.getQuery());
 
+            preparedStatement.setInt(1, id);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                preparedStatement.close();
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

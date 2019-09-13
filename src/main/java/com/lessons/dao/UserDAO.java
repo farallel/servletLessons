@@ -3,6 +3,7 @@ package com.lessons.dao;
 import com.lessons.model.Role;
 import com.lessons.model.User;
 import com.lessons.util.Constants;
+import com.sun.istack.internal.NotNull;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -93,9 +94,9 @@ public class UserDAO implements DAO<User> {
         return result;
     }
 
-    public Role getRoleByUsernameAndPassword(String username,
+    public User getUserByUsernameAndPassword(String username,
                                              String password) {
-        Role role = Role.UNKNOWN;
+        User user = new User();
         try {
             connection = Connector.createConnection();
             preparedStatement = connection.prepareStatement(UserQueries.SELECT_BY_USERNAME_AND_PASSWORD.getQuery());
@@ -105,11 +106,43 @@ public class UserDAO implements DAO<User> {
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                int result = resultSet.getInt("role_id");
-                if (result == 1)
+                user.setId(resultSet.getInt("id"));
+                user.setUsername(resultSet.getString("username"));
+                user.setPassword(resultSet.getString("password"));
+                user.setRoleId(resultSet.getInt("role_id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                resultSet.close();
+                preparedStatement.close();
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        user.setRole(getRoleById(user.getId()));
+        return user;
+    }
+
+    public Role getRoleById(@NotNull Integer id) {
+        Role role = null;
+        try {
+            connection = Connector.createConnection();
+            preparedStatement = connection.prepareStatement(UserQueries.GET_ROLE_BY_ID.getQuery());
+
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String roleType = resultSet.getString("role");
+                if (roleType.equals("ADMIN"))
                     role = Role.ADMIN;
-                else if (result == 2)
+                else if (roleType.equals("USER"))
                     role = Role.USER;
+                else
+                    role = Role.UNKNOWN;
             }
         } catch (SQLException e) {
             e.printStackTrace();

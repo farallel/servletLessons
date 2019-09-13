@@ -26,12 +26,9 @@ public class AuthFilter implements Filter {
         final String username = req.getParameter("username");
         final String password = req.getParameter("password");
 
-//        @SuppressWarnings("unchecked")
-//        final AtomicReference<UserDAO> userDAO = (AtomicReference<UserDAO>) req.getServletContext().getAttribute("user_dao");
         final AtomicReference<UserDAO> userDAO = new AtomicReference<>(new UserDAO());
         final HttpSession session = req.getSession();
 
-        //Logged user.
         if (nonNull(session) &&
                 nonNull(session.getAttribute("username")) &&
                 nonNull(session.getAttribute("password"))) {
@@ -40,13 +37,14 @@ public class AuthFilter implements Filter {
 
             moveToMenu(req, resp, role);
         } else if (userDAO.get().isUserExistByUsernameAndPassword(username, password)) {
-            final Role role = userDAO.get().getRoleByUsernameAndPassword(username, password);
+            final User user = userDAO.get().getUserByUsernameAndPassword(username, password);
 
+            req.getSession().setAttribute("id", user.getId());
             req.getSession().setAttribute("username", username);
             req.getSession().setAttribute("password", password);
-            req.getSession().setAttribute("role", role);
+            req.getSession().setAttribute("role", user.getRole());
 
-            moveToMenu(req, resp, role);
+            moveToMenu(req, resp, user.getRole());
         } else {
             moveToMenu(req, resp, Role.UNKNOWN);
         }
@@ -60,14 +58,6 @@ public class AuthFilter implements Filter {
         } else {
             req.getRequestDispatcher("/WEB-INF/view/login_page.jsp").forward(req, resp);
         }
-
-//        if (role == Role.ADMIN) {
-//            req.getRequestDispatcher("/WEB-INF/view/admin_page.jsp").forward(req, resp);
-//        } else if (role == Role.USER) {
-//            req.getRequestDispatcher("/WEB-INF/view/user_page.jsp").forward(req, resp);
-//        } else {
-//            req.getRequestDispatcher("/WEB-INF/view/login_page.jsp").forward(req, resp);
-//        }
     }
 
     @Override
