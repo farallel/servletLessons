@@ -90,7 +90,23 @@ public class PostDAO implements DAO<Post> {
 
     @Override
     public void update(Post post) {
+        try {
+            connection = Connector.createConnection();
+            preparedStatement = connection.prepareStatement(PostQueries.UPDATE.getQuery());
 
+            preparedStatement.setString(1, post.getText());
+            preparedStatement.setInt(2, post.getId());
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                preparedStatement.close();
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

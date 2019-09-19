@@ -4,6 +4,17 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
+    <!--Update Servlet-->
+    <servlet>
+        <servlet-name>Update</servlet-name>
+        <servlet-class>com.lessons.servlets.servlet.UpdateServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Update</servlet-name>
+        <url-pattern>/update</url-pattern>
+    </servlet-mapping>
+
     <!--Delete Servlet-->
     <servlet>
         <servlet-name>Delete</servlet-name>
